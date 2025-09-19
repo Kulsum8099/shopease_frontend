@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   // baseURL: "http://192.168.0.100:4000/api/v1",
   // baseURL: "http://192.168.100.223:4000/api/v1",
-  baseURL: "shopeasebackend-production.up.railway.app/api/v1",
+  baseURL: "https://shopeasebackend-production.up.railway.app/api/v1",
 });
 
 let isRefreshing = false;
