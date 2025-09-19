@@ -20,7 +20,7 @@ export const deleteService = {
 
     const response = await axiosInstance.delete(endpoint, {
       headers,
-      data: payload || undefined, // Axios DELETE body goes in `data`
+      data: payload || undefined, // Axios DELETE body goes to `data`
     });
 
     return response.data;
