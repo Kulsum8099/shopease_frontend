@@ -268,7 +268,7 @@ export default function OrderDetailsPage() {
                         <Image
                           src={
                             item.product?.images[0]
-                              ? `http://localhost:4000/${item.product.images[0]}`
+                              ? `shopeasebackend-production.up.railway.app/${item.product.images[0]}`
                               : "/placeholder-product.jpg"
                           }
                           alt={item.product?.name || "Product"}
