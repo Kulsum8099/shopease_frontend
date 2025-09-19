@@ -88,11 +88,7 @@ export default function LoginPage() {
       cookies.set("refreshToken", responseData.data.refreshToken);
       cookies.set("role", responseData.data.role);
       cookies.set("id", responseData.data.id);
-      if (responseData.data.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/profile");
-      }
+      router.push("/profile");
     },
     {
       auth: false,
