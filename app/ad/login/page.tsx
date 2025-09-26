@@ -89,8 +89,8 @@ export default function AdminLoginPage() {
     (responseData) => {
       cookies.set("accessToken", responseData.data.accessToken);
       cookies.set("refreshToken", responseData.data.refreshToken);
-      cookies.set("id", responseData.data.id);
       cookies.set("role", responseData.data.role);
+      cookies.set("id", responseData.data.id);
       router.push("/admin");
     },
     {
