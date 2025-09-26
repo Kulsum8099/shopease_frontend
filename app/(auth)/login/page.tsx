@@ -1,10 +1,9 @@
 "use client";
 
 import type React from "react";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -48,13 +47,13 @@ export default function LoginPage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    
-    // Clear error when user starts typing
+
+    // clear field errors when user types
     if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-    
-    // Clear backend error when user makes changes
+
+    // clear backend error when user edits
     if (backendError) {
       setBackendError("");
     }
@@ -84,31 +83,44 @@ export default function LoginPage() {
   const { mutate: login, isPending } = usePostFormData<LoginResponse>(
     "/auth/signin",
     (responseData) => {
-      cookies.set("accessToken", responseData.data.accessToken);
-      cookies.set("refreshToken", responseData.data.refreshToken);
-      cookies.set("role", responseData.data.role);
-      cookies.set("id", responseData.data.id);
+      // ✅ set cookies with production-safe options
+      cookies.set("accessToken", responseData.data.accessToken, {
+        sameSite: "None",
+        secure: true,
+      });
+      cookies.set("refreshToken", responseData.data.refreshToken, {
+        sameSite: "None",
+        secure: true,
+      });
+      cookies.set("role", responseData.data.role, {
+        sameSite: "None",
+        secure: true,
+      });
+      cookies.set("id", responseData.data.id, {
+        sameSite: "None",
+        secure: true,
+      });
+
+      console.log("✅ Login success", responseData);
       router.push("/profile");
     },
-    {
-      auth: false,
-    },
+    { auth: false },
     (error) => {
+      console.error("❌ Login error:", error);
       setBackendError(error.message);
     }
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setBackendError("");
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
-    login(formData);
-    setIsLoading(false);
+    login(formData, {
+      onSettled: () => setIsLoading(false), // ✅ fix race condition
+    });
   };
 
   return (
@@ -123,6 +135,7 @@ export default function LoginPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email address</Label>
           <Input
@@ -140,6 +153,7 @@ export default function LoginPage() {
           )}
         </div>
 
+        {/* Password */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
@@ -174,6 +188,7 @@ export default function LoginPage() {
           )}
         </div>
 
+        {/* Remember Me */}
         <div className="flex items-center space-x-2">
           <Checkbox
             id="rememberMe"
@@ -189,6 +204,7 @@ export default function LoginPage() {
           </Label>
         </div>
 
+        {/* Submit */}
         <Button
           type="submit"
           className="w-full bg-rose-600 hover:bg-rose-700"
